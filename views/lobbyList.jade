@@ -1,0 +1,7 @@
+extends ./layout.jade
+block content
+  h1 List of Kitchen Syncs
+  ul
+  - for(var i = 0; i < names.length; i++)
+    li: a(href = '/kitchen/sync/' + names[i])
+      =names[i]

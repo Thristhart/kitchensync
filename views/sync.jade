@@ -1,0 +1,19 @@
+extends ./layout.jade
+block extraCSS
+  link(href="/kitchen/asset/css/plugins/" + plugin + ".css", rel="stylesheet")
+  link(href="/kitchen/asset/css/syncbase.css", rel="stylesheet")
+block content
+  #player
+  form#hostControls
+    input(name="contentId")
+    select(name="faucet")
+      option(value="youtube") Youtube
+      option(value="mediacrush") MediaCrush
+    input(type="submit")
+  a#sourceDisplay(target="_blank") Source
+  script(src="/kitchen/socket/socket.io.js")
+  script(src="/kitchen/asset/js/debug.js")
+  script(src="/kitchen/asset/js/get-youtube-id.js")
+  script(src="/kitchen/asset/js/syncbase.js")
+  script.
+    SyncBase.connect(#{id});

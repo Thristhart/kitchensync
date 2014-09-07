@@ -1,0 +1,14 @@
+doctype html
+html(lang="en")
+  head
+    block title
+      title= title
+    block extraCSS
+  body
+    ul
+      li: a(href="/kitchen/sync/create").
+        New lobby
+      li: a(href="/kitchen/sync/list").
+        List lobbies
+    block content
+      h1 KitchenSync
