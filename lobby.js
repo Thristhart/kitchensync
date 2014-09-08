@@ -3,7 +3,6 @@ module.exports = function() {
   var lobbies = {};
   var route = express.Router();
   var log = require('debug')("kitchensync:lobby");
-  var url = require('url');
   var faucets = require('./faucets');
 
   route.get('/create', function(request, resource) {
@@ -34,17 +33,8 @@ module.exports = function() {
         if(lobby.host != socket)
           return;
         log("Detecting plugin for url %s", inputURL);
-        var parsed = url.parse(inputURL);
-        var data = {};
-        log(parsed.host);
-        if(parsed.host == "youtube.com" || parsed.host == "www.youtube.com") {
-          data.faucet = "youtube";
-          data.contentId = faucets.getYoutubeID(inputURL);
-        }
-        if(parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") {
-          data.faucet = "mediacrush";
-          data.contentId = faucets.getMediaCrushID(inputURL); 
-        }
+
+        var data = faucets.parseURL(inputURL);
 
         if(data.faucet && data.contentId)
           changeMedia(data);
