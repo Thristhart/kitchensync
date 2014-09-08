@@ -3,6 +3,9 @@ module.exports = function() {
   var lobbies = {};
   var route = express.Router();
   var log = require('debug')("kitchensync:lobby");
+  var url = require('url');
+  var faucets = require('./faucets');
+
   route.get('/create', function(request, resource) {
     var io = module.exports.io;
     var new_id = Math.floor(Math.random() * 1000);
@@ -27,6 +30,25 @@ module.exports = function() {
         log("No lobby host, so making first connection host: %o", lobby.host);
       }
       socket.emit('setFaucet', lobby.faucet);
+      socket.on('detect plugin by url', function(inputURL) {
+        if(lobby.host != socket)
+          return;
+        log("Detecting plugin for url %s", inputURL);
+        var parsed = url.parse(inputURL);
+        var data = {};
+        log(parsed.host);
+        if(parsed.host == "youtube.com" || parsed.host == "www.youtube.com") {
+          data.faucet = "youtube";
+          data.contentId = faucets.getYoutubeID(inputURL);
+        }
+        if(parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") {
+          data.faucet = "mediacrush";
+          data.contentId = faucets.getMediaCrushID(inputURL); 
+        }
+
+        if(data.faucet && data.contentId)
+          changeMedia(data);
+      });
       socket.on('faucet ready', function(data) {
         log("New faucet ready for sync");
         var diff = Date.now() - lobby.lastUpdateTime;
@@ -36,7 +58,7 @@ module.exports = function() {
         log("Sending time to new faucet: %d", lobby.lastKnownTime + diff/1000)
         socket.emit('load', {id:lobby.contentID, time: lobby.lastKnownTime + diff/1000, paused: lobby.paused});
       });
-      socket.on('changeMedia', function(data) {
+      function changeMedia(data) {
         if(lobby.host != socket || !data.contentId || !data.faucet) {
           log("Attempt to changeMedia from non-host, or changeMedia with invalid data: %o", data);
           return;
@@ -47,7 +69,8 @@ module.exports = function() {
         lobby.faucet = data.faucet;
         namespace.emit('setFaucet', lobby.faucet);
         namespace.emit('load', {id:lobby.contentID, time: 0, paused: lobby.paused});
-      });
+      }
+      socket.on('changeMedia', changeMedia);
       socket.on('poke', function() {
         var diff = Date.now() - lobby.lastUpdateTime;
         if(lobby.paused)
