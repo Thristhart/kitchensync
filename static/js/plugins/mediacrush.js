@@ -68,6 +68,7 @@ MediaCrushFaucet.createPlayer = function(id, startTime) {
           sourceElem.type = media.files[i].type;
           videoElem.appendChild(sourceElem);
         }
+        videoElem.src = "https://mediacru.sh/" + media.files[0].file
         break;
       case "audio":
         var audioElem;
@@ -88,6 +89,7 @@ MediaCrushFaucet.createPlayer = function(id, startTime) {
           sourceElem.type = media.files[i].type;
           audioElem.appendChild(sourceElem);
         }
+        audioElem.src = "https://mediacru.sh/" + media.files[0].file
         break;
     }
     if(MediaCrushFaucet.player) {
