@@ -90,26 +90,73 @@ SyncBase.contentEnded = function() {
 SyncBase.seekTo = function(time) {
   this.socket.emit("setseek", time);
 }
+SyncBase.detectUrlPlugin = function(url) {
+  this.socket.emit("detect plugin by url", url);
+}
 SyncBase.faucetContentLoaded = function() {
   var sourceDisplay = document.getElementById("sourceDisplay");
   var url = SyncBase.faucet.getMediaUrl();
   sourceDisplay.href = url;
 }
+SyncBase.filesDragged = function(files) {
+  if(files.length == 0 || !SyncBase.faucet.host) {
+    log("Couldn't upload dragged file because no file or not host");
+    return;
+  }
+  log("Uploading file to mediacrush");
+  document.documentElement.className = "uploading";
+  MediaCrush.upload(files[0], function(media) {
+    media.wait(function() { // waiting for processing to finish
+      document.documentElement.className = "";
+      SyncBase.linkDragged(media.url);
+    });
+  });
+}
+SyncBase.linkDragged = function(link) {
+  if(SyncBase.faucet.host) {
+    log("Drag-drop of link by host: %o", link);
+    SyncBase.detectUrlPlugin(link);
+  }
+}
 
 var hostControls = document.getElementById("hostControls");
 
 hostControls.onsubmit = function(event) {
-  var data = {};
-  data.faucet = hostControls.elements.faucet.value;
-  switch(data.faucet) {
-    case "youtube":
-      data.contentId = getYouTubeID(hostControls.elements.contentId.value);
-      log("Parsing youtube URL for submission: %s => %s", hostControls.elements.contentId.value, data.contentId)
-      break;
-    case "mediacrush":
-      data.contentId = hostControls.elements.contentId.value;
-      break;
-  }
-  SyncBase.changeMedia(data);
+  var link = hostControls.elements.contentId.value;
+  SyncBase.detectUrlPlugin(link);
   return false;
 };
+
+// enable file drag-n-drop
+document.documentElement.addEventListener("dragover", function(event) {
+  if(SyncBase.faucet.host) {
+    this.className = "dragHover";
+    event.preventDefault();
+    event.effectAllowed = "copy";
+    event.dropEffect = "copy";
+  }
+  return false;
+});
+document.documentElement.addEventListener("dragend", function(event) {
+  this.className = "";
+  return false;
+});
+document.documentElement.addEventListener("drop", function(event) {
+  this.className = "";
+
+  event.preventDefault();
+  log(event);
+  var types = event.dataTransfer.types;
+  for(var i = 0; i < types.length; i++) {
+    if(types[i] == "text/uri-list") {
+      SyncBase.linkDragged(event.dataTransfer.getData("URL"));
+      break;
+    }
+  }
+
+  if(event.dataTransfer.files.length > 0) {
+    SyncBase.filesDragged(event.dataTransfer.files);
+  }
+
+  return false;
+});

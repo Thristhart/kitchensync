@@ -141,9 +141,11 @@ MediaCrushFaucet.onMediaCrushAPIReady = function() {
   MediaCrushFaucet.ready = true;
 }
 MediaCrushFaucet.unBuild = function() {
-  MediaCrushFaucet.player.stopVideo();
- 
-  var container = MediaCrushFaucet.player.getIframe();
+  if(MediaCrushFaucet.player) {
+    MediaCrushFaucet.player.pause();
+
+  }
+  var container = MediaCrushFaucet.container;
 
   var parent = container.parentElement;
   parent.removeChild(container);
