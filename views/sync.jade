@@ -13,7 +13,8 @@ block content
   a#sourceDisplay(target="_blank") Source
   script(src="/kitchen/socket/socket.io.js")
   script(src="/kitchen/asset/js/debug.js")
-  script(src="/kitchen/asset/js/get-youtube-id.js")
+  // needed for drag-and-drop file upload/sync
+  script(src="https://mediacru.sh/static/mediacrush.js")
   script(src="/kitchen/asset/js/syncbase.js")
   script.
     SyncBase.connect(#{id});
