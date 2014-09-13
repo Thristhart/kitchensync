@@ -244,9 +244,11 @@ module.exports = function() {
 
     return resource.redirect(new_id);
   });
-  route.get('/list', function(request, resource) {
+  var list = function(request, resource) {
     resource.render('lobbyList', {names: Object.keys(lobbies), title: "Kitchen Sync: List"});
-  });
+  };
+  route.get('/', list);
+  route.get('/list', list);
   route.get('/:id', function(request, resource) {
     var id = request.param("id");
     var lobby = lobbies[id];
