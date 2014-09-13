@@ -1,6 +1,8 @@
 var urlLib = require('url');
 var request = require('request');
 var path = require('path');
+var og = require('open-graph');
+
 var log = require('debug')("faucets");
 
 exports.getMediaCrushID = function(url) {
@@ -53,6 +55,43 @@ exports.getAnimeFreakID = function(url, callback) {
       log("Decoded escapedURL: %s", data.contentId);
       callback(data);
     }
+  });
+}
+
+exports.getRTID = function(url, callback) {
+  og(url, function(err, data) {
+    if(err) {
+      log("Error parsing RT opengraph, %o", err);
+      callback(null);
+      return;
+    }
+    var video = data.video;
+    if(!video) {
+      log("RT opengraph has no video");
+      callback(null);
+      return;
+    }
+    var blipParsed = urlLib.parse(video.secure_url);
+    var blipFramePath = "https://" + blipParsed.host + blipParsed.pathname + ".html";
+    log("Requesting iframe from blip: %s", blipFramePath);
+    request(blipFramePath, function(error, response, body) {
+      if(error) {
+        log("Error trying to request blip embed frame: %o", error);
+        callback(null);
+        return;
+      }
+      if(response.statusCode == 404) {
+        log("404d on blip embed request");
+        callback(null);
+        return;
+      }
+      var blipEvilRegex = /bliphd720 : "(.*)"/
+      var blipVideoSourceMatches = body.match(blipEvilRegex);
+      var mediaUrl = blipVideoSourceMatches[blipVideoSourceMatches.length - 1];
+      mediaUrl = "https://blip.tv/file/get/" + mediaUrl + "?showplayer=20140904174336";
+      callback({faucet: "html5video", contentId: mediaUrl});
+    });
+    callback(null);
   });
 }
 
@@ -111,6 +150,10 @@ exports.parseURL = function(inputURL, callback) {
   else if(parsed.host == "animefreak.tv" || parsed.host == "www.animefreak.tv") {
     log("Detected animefreak");
     exports.getAnimeFreakID(inputURL, callback);
+  }
+  else if(parsed.host == "roosterteeth.com" || parsed.host == "www.roosterteeth.com") {
+    log("Detected RT");
+    exports.getRTID(inputURL, callback);
   }
   else {
     log("Could not detect a faucet by URL, attempting HEAD to get content type")
