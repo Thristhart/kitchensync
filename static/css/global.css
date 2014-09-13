@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url(/kitchen/asset/images/dark_wood.png);
+  color: white;
+}
+body:before {
+  content: url(/kitchen/asset/images/sink_faucet.png);
+  z-index: 10;
+  right: calc(50% - 38px + 13px);
+  top: 0;
+  position: absolute;
+}
+
+a#lobbyList {
+  position: absolute;
+  right: calc(50% + 38px);
+  top: 0.5em;
+  z-index: 10;
+}
+a#createLobby {
+  position: absolute;
+  right: calc(50% - 160px);
+  top: 0.5em;
+  z-index: 10;
+}
+a#createLobby:before {
+  content: url(/kitchen/asset/images/sink_knob_right.png);
+  float: left;
+}
+a#lobbyList:after {
+  content: url(/kitchen/asset/images/sink_knob_left.png);
+  float: right;
+}
+
+#title {
+  margin: 0;
+  padding-left: 1em;
+  padding-top: 0.5em;
+}
+a {
+  color: white;
+}
+
+#nav {
+  width: 100%;
+  height: 5em;
+  margin: 0;
+  padding: 0;
+}
+
+.sink {
+  border-style: solid;
+  border-width: 38px 41px;
+  -moz-border-image: url(/kitchen/asset/images/sink_border.png) 38 41 stretch round;
+  -webkit-border-image: url(/kitchen/asset/images/sink_border.png) 38 41 stretch round;
+  -o-border-image: url(/kitchen/asset/images/sink_border.png) 38 41 stretch round;
+  border-image: url(/kitchen/asset/images/sink_border.png) 38 41 stretch round;
+
+  display: inline-block;
+  line-height: 0;
+
+  background:
+    url(/kitchen/asset/images/sink_drain.png) no-repeat,
+    url(/kitchen/asset/images/sink_background.png);
+  background-size: 10%, 101% 100%;
+  background-position: center center, -1px 0;
+  min-width:  100px;
+  min-height: 100px;
+  max-height: 30em;
+
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.content {
+  width: 60%;
+  margin: auto;
+  display: block;
+  min-height: 20em;
+  line-height: normal;
+}

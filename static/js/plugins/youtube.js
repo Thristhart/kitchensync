@@ -31,6 +31,8 @@ YoutubeFaucet.load = function(data) {
     YoutubeFaucet.ignoreNextMediaChange = false;
     return;
   }
+
+  YoutubeFaucet.alreadyLoaded = false;
   this.player.loadVideoById(target);
   if(data.paused)
     this.shouldBePaused = true;
@@ -81,6 +83,7 @@ YoutubeFaucet.onPlayerStateChange = function(event) {
     case YT.PlayerState.PLAYING:
       YoutubeFaucet.log("PlayerState is PLAYING");
       if(YoutubeFaucet.wasBuffering) {
+        log("wasBuffering and", YoutubeFaucet.shouldBePaused, YoutubeFaucet.wasEnded, YoutubeFaucet.alreadyLoaded);
         if(YoutubeFaucet.shouldBePaused) {
           YoutubeFaucet.log("was buffering and shouldBePaused, pausing");
           YoutubeFaucet.player.pauseVideo();
@@ -89,6 +92,11 @@ YoutubeFaucet.onPlayerStateChange = function(event) {
           YoutubeFaucet.log("Detected video change, pushing change");
           SyncBase.changeMedia({"contentId": YoutubeFaucet.player.getVideoData().video_id, faucet: "youtube"});
           YoutubeFaucet.ignoreNextMediaChange = true; // skip next load because we just did it
+          YoutubeFaucet.alreadyLoaded = false;
+        }
+        if(!YoutubeFaucet.alreadyLoaded) {
+          SyncBase.faucetContentLoaded();
+          YoutubeFaucet.alreadyLoaded = true;
         }
         YoutubeFaucet.wasBuffering = false;
       }
@@ -112,7 +120,6 @@ YoutubeFaucet.onPlayerStateChange = function(event) {
     case YT.PlayerState.BUFFERING:
       YoutubeFaucet.log("PlayerState is BUFFERING");
       YoutubeFaucet.wasBuffering = true;
-      SyncBase.faucetContentLoaded();
       break;
     case YT.PlayerState.CUED:
       YoutubeFaucet.log("PlayerState is CUED");

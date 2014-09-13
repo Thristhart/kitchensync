@@ -3,15 +3,28 @@ block extraCSS
   link(href="/kitchen/asset/css/plugins/" + plugin + ".css", rel="stylesheet")
   link(href="/kitchen/asset/css/syncbase.css", rel="stylesheet")
 block content
-  #player
-  form#hostControls
-    input(name="contentId")
-    input(type="submit")
-  a#sourceDisplay(target="_blank") Source
+  #playerSink.sink
+    #player
+    form#hostControls
+      input(name="contentId")
+      input(type="submit", value="Change media")
+    a#sourceDisplay(target="_blank") Source
+    #queue
+      ol#queueList
+      form#queueControls
+        input(name="queueAddition")
+        input(type="submit",value="Add to queue")
+        input(type="button",value="Skip to next",name="skip")
+  #chat.sink
+    #chatlog
+    form#chatInput
+      a(id="nickname" href="#") nickname
+      input(name="chatMessage")
+      input(type="submit",value="Send message")
   script(src="/kitchen/socket/socket.io.js")
   script(src="/kitchen/asset/js/debug.js")
   // needed for drag-and-drop file upload/sync
   script(src="https://mediacru.sh/static/mediacrush.js")
   script(src="/kitchen/asset/js/syncbase.js")
   script.
-    SyncBase.connect(#{id});
+    SyncBase.connect("#{id}");

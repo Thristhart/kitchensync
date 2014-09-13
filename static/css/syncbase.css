@@ -1,5 +1,6 @@
 #hostControls {
   display: none;
+  float: left;
 }
 #sourceDisplay:not([href]) {
   visibility: hidden;
@@ -10,11 +11,123 @@
   background-repeat: no-repeat;
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtODI2LjQyOSAtNjk4Ljc5MSkiPjxyZWN0IHdpZHRoPSI1Ljk4MiIgaGVpZ2h0PSI1Ljk4MiIgeD0iODI2LjkyOSIgeT0iNzAyLjMwOSIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDZjIi8+PGc+PHBhdGggZD0iTTgzMS4xOTQgNjk4Ljc5MWg1LjIzNHY1LjM5MWwtMS41NzEgMS41NDUtMS4zMS0xLjMxLTIuNzI1IDIuNzI1LTIuNjg5LTIuNjg5IDIuODA4LTIuODA4LTEuMzExLTEuMzExeiIgZmlsbD0iIzA2ZiIvPjxwYXRoIGQ9Ik04MzUuNDI0IDY5OS43OTVsLjAyMiA0Ljg4NS0xLjgxNy0xLjgxNy0yLjg4MSAyLjg4MS0xLjIyOC0xLjIyOCAyLjg4MS0yLjg4MS0xLjg1MS0xLjg1MXoiIGZpbGw9IiNmZmYiLz48L2c+PC9nPjwvc3ZnPg==);
   padding-right: 0.8em;
+
+  display: inline-block;
+  line-height: normal;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: white;
 }
 
 .dragHover {
   background-color: blue;
+  background: blue;
 }
 .uploading {
   background-color: cyan;
+}
+
+/* move the faucet to the center */
+body:before {
+  right: calc(35% - 38px + 13px);
+}
+a#lobbyList {
+  right: calc(35% + 35px);
+  top: 0.5em;
+}
+a#createLobby {
+  right: calc(35% - 160px);
+  top: 0.5em;
+}
+
+#playerSink {
+  position: absolute;
+  top: 5em;
+  bottom: 0;
+  left: 2em;
+  width: 60%;
+  width: calc(65% - 76px - 2em);
+  text-align: center;
+}
+#chat {
+  position: absolute;
+  top: 5em;
+  bottom: 0;
+  right: 2em;
+  width: 30%;
+  width: calc(35% - 76px - 2em);
+}
+
+#chatlog {
+  position: absolute;
+  top: 0;
+  bottom: 2em;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  margin-left: 1em;
+  margin-right: 1em;
+
+  line-height: normal;
+  background-color: rgba(0, 43, 54, 0.3);
+  word-wrap: break-word;
+}
+.logMessage {
+  display: block;
+}
+.from {
+  color: #2aa198;
+}
+
+
+#chatInput {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#queue {
+  position: absolute;
+  top: 33em;
+  width: 100%;
+  line-height: normal;
+}
+#queue input {
+  width: 8em;
+  float: left;
+  clear: both;
+}
+#queueControls {
+  float: right;
+  display: none;
+}
+#queueList {
+  float: left;
+  width: 86%;
+  width: calc(100% - 8em);
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+}
+
+#queueList li {
+  list-style-type: none;
+
+  /* sigh... vertical centering */
+  display: table-cell;
+  vertical-align: middle;
+
+  border: 1px solid white;
+  background: white;
+  border-radius: 0.5em;
+  width: 5em;
+  height: 5em;
+}
+#queueList li img {
+  margin: auto;
+  display: block;
+  max-width: 5em;
+  max-height: 5em;
 }

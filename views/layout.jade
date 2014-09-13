@@ -3,12 +3,14 @@ html(lang="en")
   head
     block title
       title= title
+    link(rel="stylesheet", href="/kitchen/asset/css/global.css")
     block extraCSS
   body
-    ul
-      li: a(href="/kitchen/sync/create").
+    ul#nav
+      h1#title= title
+      li: a(href="/kitchen/sync/create" id="createLobby").
         New lobby
-      li: a(href="/kitchen/sync/list").
+      li: a(href="/kitchen/sync/list" id="lobbyList").
         List lobbies
     block content
       h1 KitchenSync
