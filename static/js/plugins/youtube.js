@@ -36,6 +36,8 @@ YoutubeFaucet.load = function(data) {
   this.player.loadVideoById(target);
   if(data.paused)
     this.shouldBePaused = true;
+  else
+    this.shouldBePaused = false;
   YoutubeFaucet.lastTime = target.startSeconds || 0;
 }
 YoutubeFaucet.pause = function() {
