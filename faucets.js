@@ -68,7 +68,17 @@ exports.getRTID = function(url, callback) {
     var video = data.video;
     if(!video) {
       log("RT opengraph has no video");
-      callback(null);
+      // probably html5 video via jwplayer, so try that
+      request(url, function(error, response, body) {
+        var jwPlayerEvilRegex = /file: "(.*720p.mp4)"/;
+        var jwPlayerUrlMatches = body.match(jwPlayerEvilRegex);
+        if(jwPlayerUrlMatches.length > 0) {
+          var mediaUrl = jwPlayerUrlMatches[jwPlayerUrlMatches.length - 1];
+          callback({faucet: "html5video", contentId: mediaUrl});
+        }
+        else
+          callback(null);
+      });
       return;
     }
     var blipParsed = urlLib.parse(video.secure_url);
