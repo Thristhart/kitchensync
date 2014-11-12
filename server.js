@@ -3,8 +3,8 @@ var app = express();
 var http = require('http').Server(app);
 
 // controllers
-var site = require('./site')
-var lobby = require('./lobby')
+var site = require('./site');
+var lobby = require('./lobby');
 
 lobby.startSocketIO(http);
 

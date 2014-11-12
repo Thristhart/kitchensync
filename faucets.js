@@ -11,7 +11,7 @@ exports.getMediaCrushID = function(url) {
   if(!matches)
     return null;
   return matches[matches.length - 1];
-}
+};
 exports.getYoutubeID = require('get-youtube-id');
 exports.getAnimeFreakID = function(url, callback) {
   var animeFreakEvilRegex = /(coz|loadParts)\(["'](.+)["'],(.+)\)/;
@@ -28,7 +28,7 @@ exports.getAnimeFreakID = function(url, callback) {
     }
     var escapedURL = matches[matches.length - 2];
     log("Got animefreak body, with escapedURL %s", escapedURL);
-    var data = {}
+    var data = {};
     data.faucet = "html5video";
     data.contentId = decodeURIComponent(escapedURL);
     if(data.contentId.indexOf("iframe") != -1) {
@@ -41,7 +41,7 @@ exports.getAnimeFreakID = function(url, callback) {
           callback(null);
           return;
         }
-        var animeFreakEvil2Regex = /movie["'] value=["'](.+)file=(.+)["']/
+        var animeFreakEvil2Regex = /movie["'] value=["'](.+)file=(.+)["']/;
         var flashMovieMatches = body.match(animeFreakEvil2Regex);
         log(flashMovieMatches);
         data.contentId = decodeURIComponent(flashMovieMatches[flashMovieMatches.length - 1]);
@@ -56,7 +56,7 @@ exports.getAnimeFreakID = function(url, callback) {
       callback(data);
     }
   });
-}
+};
 
 exports.getRTID = function(url, callback) {
   og(url, function(err, data) {
@@ -98,7 +98,7 @@ exports.getRTID = function(url, callback) {
         callback(null);
         return;
       }
-      var blipEvilRegex = /bliphd720 : "(.*)"/
+      var blipEvilRegex = /bliphd720 : "(.*)"/;
       var blipVideoSourceMatches = body.match(blipEvilRegex);
       var mediaUrl = blipVideoSourceMatches[blipVideoSourceMatches.length - 1];
       mediaUrl = "https://blip.tv/file/get/" + mediaUrl + "?showplayer=20140904174336";
@@ -106,7 +106,7 @@ exports.getRTID = function(url, callback) {
     });
     callback(null);
   });
-}
+};
 
 exports.attemptToDetectContentTypeByHEAD = function(parsed, callback) {
   request.head(parsed.href, function(error, response, body) {
@@ -144,7 +144,7 @@ exports.attemptToDetectContentTypeByHEAD = function(parsed, callback) {
         callback(null);
     }
   });
-}
+};
 
 exports.parseURL = function(inputURL, callback) {
   var parsed = urlLib.parse(inputURL);
@@ -156,8 +156,8 @@ exports.parseURL = function(inputURL, callback) {
     data.contentId = exports.getYoutubeID(inputURL);
     callback(data);
   }
-  else if((parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") && path.extname(parsed.path) == '') {
-    var mediaCrushURL = "https://mediacru.sh/"
+  else if((parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") && path.extname(parsed.path) === '') {
+    var mediaCrushURL = "https://mediacru.sh/";
     log("Detected mediacrush");
     mediaCrushURL += exports.getMediaCrushID(inputURL) + ".ogg";
     var mediaParsed = urlLib.parse(mediaCrushURL);
@@ -172,7 +172,7 @@ exports.parseURL = function(inputURL, callback) {
     exports.getRTID(inputURL, callback);
   }
   else {
-    log("Could not detect a faucet by URL, attempting HEAD to get content type")
+    log("Could not detect a faucet by URL, attempting HEAD to get content type");
     exports.attemptToDetectContentTypeByHEAD(parsed, callback);
   }
-}
+};
