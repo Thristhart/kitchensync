@@ -72,12 +72,15 @@ exports.getRTID = function(url, callback) {
       request(url, function(error, response, body) {
         var jwPlayerEvilRegex = /file: "(.*720p.mp4)"/;
         var jwPlayerUrlMatches = body.match(jwPlayerEvilRegex);
-        if(jwPlayerUrlMatches.length > 0) {
+        if(jwPlayerUrlMatches) {
           var mediaUrl = jwPlayerUrlMatches[jwPlayerUrlMatches.length - 1];
           callback({faucet: "html5video", contentId: mediaUrl});
         }
-        else
+        else {
+          log("RT has no video opengraph but also no JWPlayer match?");
+          log(body);
           callback(null);
+        }
       });
       return;
     }
@@ -135,6 +138,9 @@ exports.attemptToDetectContentTypeByHEAD = function(parsed, callback) {
         break;
       default:
         log("Got a contentType with no faucet assigned to it, returning null (%s)", type);
+        request(parsed.href, function(error, response, body) {
+          log(body);
+        });
         callback(null);
     }
   });
