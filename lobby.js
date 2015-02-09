@@ -239,9 +239,7 @@ module.exports = function() {
             lobby.lastUpdateTime = Date.now();
             lobby.lastKnownTime = data;
             log("Seeking to new time %d", data);
-            for(var clientID in namespace.connected) {
-              broadcast('seek', data, [socket]);
-            }
+            broadcast('seek', data, [socket]);
           }
         });
         socket.on('pause', function(data) {
