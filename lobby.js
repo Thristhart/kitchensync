@@ -249,6 +249,7 @@ module.exports = function() {
             lobby.lastKnownTime = data;
             lobby.lastUpdateTime = Date.now();
             lobby.paused = true;
+            broadcast('seek', data, [socket]);
           }
         });
         socket.on('play', function() {
