@@ -28,7 +28,7 @@ SyncBase.setFaucet = function(faucetId) {
     SyncBase.faucet.buildPlayer(container);
     log("Loaded new faucet %s", faucetId);
   });
-}
+};
 
 SyncBase.connect = function(id) {
   var socket = io("/lobby/" + id, {path: '/kitchen/socket'});
@@ -37,7 +37,7 @@ SyncBase.connect = function(id) {
     log("connect");
     
     socket.on('seek', function(data) {
-      log("seek to time: %d", data)
+      log("seek to time: %d", data);
       SyncBase.faucet.seek(data);
     });
     socket.on('load', function(data) {
@@ -111,17 +111,17 @@ SyncBase.connect = function(id) {
 
   SyncBase.socket = socket;
   SyncBase.lobbyId = id;
-}
+};
 
 SyncBase.faucetReady = function() {
   this.socket.emit("faucet ready");
-}
+};
 SyncBase.setTitleString = function(newTitle) {
   document.getElementById("title").innerHTML = newTitle;
-}
+};
 SyncBase.poke = function() {
   this.socket.emit("poke");
-}
+};
 SyncBase.displayMessage = function(message) {
   var chatlog = document.getElementById("chatlog");
   var message_elem = document.createElement("span");
@@ -131,31 +131,31 @@ SyncBase.displayMessage = function(message) {
   if(chatlog.scrollHeight - chatlog.offsetHeight - 100 < chatlog.scrollTop) {
     chatlog.scrollTop = chatlog.scrollHeight;
   }
-}
+};
 SyncBase.play = function() {
   this.socket.emit("play");
-}
+};
 SyncBase.pause = function(pausedAt) {
   this.socket.emit("pause", pausedAt);
-}
+};
 SyncBase.changeMedia = function(newMediaData) {
   this.socket.emit('changeMedia', newMediaData);
-}
+};
 SyncBase.contentEnded = function() {
   this.socket.emit("ended");
-}
+};
 SyncBase.addToQueue = function(newQueue) {
   this.socket.emit("addToQueue", newQueue);
-}
+};
 SyncBase.skip = function() {
   this.socket.emit("nextInQueue");
-}
+};
 SyncBase.seekTo = function(time) {
   this.socket.emit("setseek", time);
-}
+};
 SyncBase.detectUrlPlugin = function(url) {
   this.socket.emit("detect plugin by url", url);
-}
+};
 // faucets must ONLY call this once per media, and only once the faucet is 100% loaded and ready to play
 SyncBase.faucetContentLoaded = function() {
   var sourceDisplay = document.getElementById("sourceDisplay");
@@ -163,7 +163,7 @@ SyncBase.faucetContentLoaded = function() {
   sourceDisplay.href = url;
 
   SyncBase.poke(); // This is risky... if a faucet doesn't obey the once-per-media rule, this will cause problems
-}
+};
 SyncBase.filesDragged = function(files) {
   if(files.length == 0 || !SyncBase.faucet.host) {
     log("Couldn't upload dragged file because no file or not host");
@@ -177,16 +177,16 @@ SyncBase.filesDragged = function(files) {
       SyncBase.linkDragged(media.url);
     });
   });
-}
+};
 SyncBase.linkDragged = function(link) {
   if(SyncBase.faucet.host) {
     log("Drag-drop of link by host: %o", link);
     SyncBase.detectUrlPlugin(link);
   }
-}
+};
 SyncBase.getVolume = function() {
   return localStorage.kitchenSyncVolume || 1;
-}
+};
 SyncBase.sendChatMessage = function(message) {
   if(message.length > 0) {
     var parts = message.split(" ");
@@ -198,7 +198,7 @@ SyncBase.sendChatMessage = function(message) {
       SyncBase.socket.emit("say", message);
     }
   }
-}
+};
 
 var hostControls = document.getElementById("hostControls");
 
