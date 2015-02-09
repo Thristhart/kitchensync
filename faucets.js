@@ -4,6 +4,13 @@ var path = require('path');
 var og = require('open-graph');
 
 var log = require('debug')("faucets");
+var config = require('./config');
+var Youtube = require('youtube-api');
+
+Youtube.authenticate({
+  type: "key",
+  key: config.get("youtubeKey")
+});
 
 exports.getMediaCrushID = function(url) {
   var mediaCrushRegex = /mediacru.sh(.*)\/([\w-]+)/;
@@ -108,6 +115,11 @@ exports.getRTID = function(url, callback) {
   });
 };
 
+exports.getYoutubePlaylistId = function(url) {
+  var p = /^.*(youtu.be\/|list=)([^#\&\?<]*)/;
+  return (url.match(p)) ? RegExp.$2 : false;
+};
+
 exports.attemptToDetectContentTypeByHEAD = function(parsed, callback) {
   request.head(parsed.href, function(error, response, body) {
     if(error) {
@@ -152,9 +164,30 @@ exports.parseURL = function(inputURL, callback) {
   log("Detecting faucet for inputURL", inputURL);
   if(parsed.host == "youtube.com" || parsed.host == "www.youtube.com" || parsed.host == "youtu.be") {
     data.faucet = "youtube";
-    log("Detected youtube");
-    data.contentId = exports.getYoutubeID(inputURL);
-    callback(data);
+    log("Detected youtube, checking for playlist");
+    var plId = exports.getYoutubePlaylistId(inputURL);
+    if(plId) {
+      log("Found a playlist, fetching items from youtube");
+      Youtube.playlistItems.list(
+        {"part": "contentDetails", "maxResults": 50, "playlistId": plId},
+        function(err, response) {
+          if(err) {
+            callback(null);
+            return log("Youtube playlist error: ", err);
+          }
+          var items = [];
+          for(var vid in response.items) {
+            if(response.items[vid].contentDetails)
+              items.push(response.items[vid].contentDetails.videoId);
+          }
+          data.items = items;
+          callback(data);
+        });
+    }
+    else {
+      data.contentId = exports.getYoutubeID(inputURL);
+      callback(data);
+    }
   }
   else if((parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") && path.extname(parsed.path) === '') {
     var mediaCrushURL = "https://mediacru.sh/";

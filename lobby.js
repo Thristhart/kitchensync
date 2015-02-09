@@ -196,11 +196,22 @@ module.exports = function() {
           if(lobby.host != socket)
             return;
           faucets.parseURL(data, function(data) {
-            if(lobby.host != socket || !data || !data.contentId || !data.faucet) {
+            if(lobby.host != socket || !data || !data.faucet) {
               log("Attempt to addToQueue from non-host, or addToQueue with invalid data: %o", data);
               return;
             }
-            lobby.queue.push({contentId:data.contentId, faucet:data.faucet, play:true});
+            if(!data.contentId && !data.items) {
+              log("No contentId or items when detecting addToQueue: %o", data);
+              return;
+            }
+            if(data.items) {
+              for(var i = 0; i < data.items.length; i++) {
+                lobby.queue.push({contentId: data.items[i], faucet:data.faucet, play:true});
+              }
+            }
+            else {
+              lobby.queue.push({contentId:data.contentId, faucet:data.faucet, play:true});
+            }
             broadcast('updateQueue', lobby.queue);
           });
         });

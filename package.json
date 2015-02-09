@@ -12,10 +12,12 @@
     "express": "~4.8.7",
     "get-youtube-id": "^0.1.3",
     "jade": "^1.6.0",
+    "nconf": "^0.7.1",
     "open-graph": "^0.1.4",
     "socket.io": "^1.1.0",
     "systemd": "^0.2.6",
-    "validator": "^3.18.0"
+    "validator": "^3.18.0",
+    "youtube-api": "^0.3.2"
   },
   "devDependencies": {
     "vows": "~0.7.0"
