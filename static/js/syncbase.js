@@ -200,13 +200,32 @@ SyncBase.sendChatMessage = function(message) {
     }
   }
 };
+SyncBase.promote = function(nick) {
+  SyncBase.socket.emit("promote", nick);
+};
 SyncBase.rebuildUserList = function(userlist) {
   var listElement = document.getElementById("memberList");
   listElement.innerHTML = ""; // clear it
+  function onUsernameClick(event) {
+    var nick = event.target.innerHTML;
+    if(confirm("Are you sure you want to promote " + nick + " to host?")) {
+      SyncBase.promote(nick);
+    }
+  }
+
   for(var i = 0; i < userlist.length; i++) {
+    var user = userlist[i];
     var itemElement = document.createElement("li");
-    itemElement.innerHTML = userlist[i].nick;
-    if(userlist[i].host)
+    if(SyncBase.faucet && SyncBase.faucet.host && user.nick != localStorage.nickname) {
+      var linkElement = document.createElement("a");
+      linkElement.addEventListener("click", onUsernameClick);
+      linkElement.innerHTML = user.nick;
+      itemElement.appendChild(linkElement);
+    }
+    else {
+      itemElement.innerHTML = user.nick;
+    }
+    if(user.host)
       itemElement.className = "host";
     listElement.appendChild(itemElement);
   }

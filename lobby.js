@@ -60,11 +60,74 @@ module.exports = function() {
             namespace.connected[clientID].emit(ev, data);
         }
       }
-      socket.once('ident', function(name) {
+      function emitSay(sender, message) {
+        var msg = {sender: sender, message: message};
+        msg.sender = validator.escape(sender);
+        broadcast('message', msg);
+        lobby.chatlog.push(msg);
+      }
+      function updateUserlist() {
+        var list = [];
+        var sockets = Object.keys(namespace.connected);
+        for(var i = 0; i < sockets.length; i++) {
+          var user = namespace.connected[sockets[i]];
+          list.push({nick: user.nick, host: lobby.host == user});
+        }
+        broadcast('userlist', list);
+      }
+      function getClientWithNick(nick) {
+        var clients = Object.keys(namespace.connected);
+        for(var i = 0; i < clients.length; i++) {
+          if(namespace.connected[clients[i]].nick == nick) {
+            return namespace.connected[clients[i]];
+          }
+        }
+        return null;
+      }
+      function promote(user) {
+        lobby.host = user;
+        log("Assigned new lobby host: %s", lobby.host.id);
+        emitSay("<system>", lobby.host.nick + " is the new host!");
+        var clients = Object.keys(namespace.connected);
+        for(var i = 0; i < clients.length; i++) {
+          var sockID = clients[i];
+          var sock = namespace.connected[sockID];
+          sock.emit('host', lobby.host == sock);
+        }
+        updateUserlist();
+      }
+      function changeMedia(data) {
+        if(lobby.host != socket || !data || !data.contentId || !data.faucet) {
+          log("Attempt to changeMedia from non-host, or changeMedia with invalid data: %o", data);
+          return;
+        }
+        emitSay("<system>", "Changing sync to " + data.faucet + " " + data.contentId);
+        lobby.lastUpdateTime = Date.now();
+        lobby.lastKnownTime = 0;
+        lobby.contentID = data.contentId;
+        lobby.faucet = data.faucet;
+        if(data.play)
+          lobby.paused = false;
+        namespace.emit('setFaucet', lobby.faucet);
+        namespace.emit('load', {id:lobby.contentID, time: 0, paused: lobby.paused});
+      }
+      function verifyNick(name) {
         name = validator.toString(name);
         name = validator.stripLow(name);
-        if(validator.isAlphanumeric(name)) {
+        if(validator.isAlphanumeric(name) && name.length < 50) {
           name = validator.escape(name);
+          var conflict = getClientWithNick(name);
+          if(conflict && conflict != socket) {
+            name += Math.round(Math.random() * 10000);
+          }
+          return name;
+        }
+        return false;
+      }
+
+      socket.once('ident', function(name) {
+        name = verifyNick(name);
+        if(name) {
           socket.nick = name;
         }
         else {
@@ -96,10 +159,8 @@ module.exports = function() {
 
         });
         socket.on('nick', function(name) {
-          name = validator.toString(name);
-          name = validator.stripLow(name);
-          if(validator.isAlphanumeric(name) && name.length < 50) {
-            name = validator.escape(name);
+          name = verifyNick(name);
+          if(name) {
             emitSay("<system>", socket.nick + " is know known as " + name);
             socket.nick = name;
             updateUserlist();
@@ -131,36 +192,6 @@ module.exports = function() {
             emitSay(senderName, cleanMessage);
           }
         });
-        function emitSay(sender, message) {
-          var msg = {sender: sender, message: message};
-          msg.sender = validator.escape(sender);
-          broadcast('message', msg);
-          lobby.chatlog.push(msg);
-        }
-        function updateUserlist() {
-          var list = [];
-          var sockets = Object.keys(namespace.connected);
-          for(var i = 0; i < sockets.length; i++) {
-            var user = namespace.connected[sockets[i]];
-            list.push({nick: user.nick, host: lobby.host == user});
-          }
-          broadcast('userlist', list);
-        }
-        function changeMedia(data) {
-          if(lobby.host != socket || !data || !data.contentId || !data.faucet) {
-            log("Attempt to changeMedia from non-host, or changeMedia with invalid data: %o", data);
-            return;
-          }
-          emitSay("<system>", "Changing sync to " + data.faucet + " " + data.contentId);
-          lobby.lastUpdateTime = Date.now();
-          lobby.lastKnownTime = 0;
-          lobby.contentID = data.contentId;
-          lobby.faucet = data.faucet;
-          if(data.play)
-            lobby.paused = false;
-          namespace.emit('setFaucet', lobby.faucet);
-          namespace.emit('load', {id:lobby.contentID, time: 0, paused: lobby.paused});
-        }
         socket.on('addToQueue', function(data) {
           if(lobby.host != socket)
             return;
@@ -230,24 +261,26 @@ module.exports = function() {
             lobby.paused = false;
           }
         });
+        socket.on('promote', function(nick) {
+          if(socket == lobby.host) {
+            log("Promotion from %s makes %s a host", lobby.host.nick, nick);
+            var match = getClientWithNick(nick);
+            if(match)
+              promote(match);
+          }
+        });
         socket.on('disconnect', function() {
           emitSay("<system>", socket.nick + " has left the sync");
           if(socket == lobby.host) {
             var remaining_clients = Object.keys(namespace.connected);
             log("Host disconnected, leaving %d sockets remaining", remaining_clients.length);
-            lobby.host = namespace.connected[remaining_clients[0]];
-            if(!lobby.host) {
+            var newHost = namespace.connected[remaining_clients[0]];
+            if(!newHost) {
               delete lobbies[lobby.id];
               log("Lobby emptied, deleting it");
             }
             else {
-              log("Assigned new lobby host: %s", lobby.host.id);
-              emitSay("<system>", lobby.host.nick + " is the new host!");
-              for(var i = 0; i < remaining_clients.length; i++) {
-                var sockID = remaining_clients[i];
-                var sock = namespace.connected[sockID];
-                sock.emit('host', lobby.host == sock);
-              }
+              promote(newHost);
             }
           }
           updateUserlist();
