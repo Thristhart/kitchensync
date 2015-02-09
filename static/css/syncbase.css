@@ -2,6 +2,10 @@
   display: none;
   float: left;
 }
+.as_host #hostControls,
+.as_host #queueControls {
+  display: block;
+}
 #sourceDisplay:not([href]) {
   visibility: hidden;
 }
@@ -86,6 +90,11 @@ a#createLobby {
 }
 #memberList .host:before {
   content: "★";
+  position: absolute;
+  left: 0;
+}
+.as_host #memberList :not(.host):hover:before {
+  content: "☆";
   position: absolute;
   left: 0;
 }

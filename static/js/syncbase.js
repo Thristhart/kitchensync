@@ -86,14 +86,12 @@ SyncBase.connect = function(id) {
       log("Are we the host? %s", data);
       SyncBase.faucet.host = data;
       if(SyncBase.faucet.host) {
-        hostControls.style.display = "block";
-        queueControls.style.display = "block";
+        document.body.className = "as_host";
         SyncBase.setTitleString("Kitchen Sync: Hosting " + SyncBase.lobbyId);
         SyncBase.displayMessage("You are the host!");
       }
       else {
-        hostControls.style.display = "none";
-        queueControls.style.display = "none";
+        document.body.className = "";
         SyncBase.setTitleString("Kitchen Sync: Watching " + SyncBase.lobbyId);
       }
     });
