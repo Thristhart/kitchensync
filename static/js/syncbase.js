@@ -207,7 +207,9 @@ SyncBase.rebuildUserList = function(userlist) {
   listElement.innerHTML = ""; // clear it
   for(var i = 0; i < userlist.length; i++) {
     var itemElement = document.createElement("li");
-    itemElement.innerHTML = userlist[i];
+    itemElement.innerHTML = userlist[i].nick;
+    if(userlist[i].host)
+      itemElement.className = "host";
     listElement.appendChild(itemElement);
   }
   return listElement;

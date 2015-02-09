@@ -142,7 +142,7 @@ module.exports = function() {
           var sockets = Object.keys(namespace.connected);
           for(var i = 0; i < sockets.length; i++) {
             var user = namespace.connected[sockets[i]];
-            list.push(user.nick);
+            list.push({nick: user.nick, host: lobby.host == user});
           }
           broadcast('userlist', list);
         }

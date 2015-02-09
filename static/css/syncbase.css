@@ -84,6 +84,11 @@ a#createLobby {
   list-style: none;
   padding-left: 1em;
 }
+#memberList .host:before {
+  content: "★";
+  position: absolute;
+  left: 0;
+}
 .logMessage {
   display: block;
 }
