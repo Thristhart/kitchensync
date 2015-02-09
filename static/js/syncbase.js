@@ -107,6 +107,9 @@ SyncBase.connect = function(id) {
     socket.on('badnick', function() {
       SyncBase.displayMessage("Invalid nick name!");
     });
+    socket.on('userlist', function(msg) {
+      SyncBase.rebuildUserList(msg);
+    });
   });
 
   SyncBase.socket = socket;
@@ -165,7 +168,7 @@ SyncBase.faucetContentLoaded = function() {
   SyncBase.poke(); // This is risky... if a faucet doesn't obey the once-per-media rule, this will cause problems
 };
 SyncBase.filesDragged = function(files) {
-  if(files.length == 0 || !SyncBase.faucet.host) {
+  if(files.length === 0 || !SyncBase.faucet.host) {
     log("Couldn't upload dragged file because no file or not host");
     return;
   }
@@ -198,6 +201,16 @@ SyncBase.sendChatMessage = function(message) {
       SyncBase.socket.emit("say", message);
     }
   }
+};
+SyncBase.rebuildUserList = function(userlist) {
+  var listElement = document.getElementById("memberList");
+  listElement.innerHTML = ""; // clear it
+  for(var i = 0; i < userlist.length; i++) {
+    var itemElement = document.createElement("li");
+    itemElement.innerHTML = userlist[i];
+    listElement.appendChild(itemElement);
+  }
+  return listElement;
 };
 
 var hostControls = document.getElementById("hostControls");

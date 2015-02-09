@@ -59,19 +59,30 @@ a#createLobby {
   width: calc(35% - 76px - 2em);
 }
 
-#chatlog {
+#chatlog, #memberList {
   position: absolute;
   top: 0;
   bottom: 2em;
-  left: 0;
-  right: 0;
-  overflow: auto;
-  margin-left: 1em;
-  margin-right: 1em;
 
   line-height: normal;
   background-color: rgba(0, 43, 54, 0.3);
+}
+#chatlog {
+  left: 0;
+  right: 30%;
+  overflow: auto;
+  margin-left: 1em;
+
   word-wrap: break-word;
+}
+#memberList {
+  left: 70%;
+  right: 0;
+  margin: 0;
+  margin-right: 1em;
+  border-left: 0.1em solid white;
+  list-style: none;
+  padding-left: 1em;
 }
 .logMessage {
   display: block;
