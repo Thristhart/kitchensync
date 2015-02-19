@@ -164,9 +164,14 @@ exports.parseURL = function(inputURL, callback) {
   log("Detecting faucet for inputURL", inputURL);
   if(parsed.host == "youtube.com" || parsed.host == "www.youtube.com" || parsed.host == "youtu.be") {
     data.faucet = "youtube";
-    log("Detected youtube, checking for playlist");
+    log("Detected youtube, checking for video id");
+    var vidId = exports.getYoutubeID(inputURL);
     var plId = exports.getYoutubePlaylistId(inputURL);
-    if(plId) {
+    if(vidId) {
+      data.contentId = exports.getYoutubeID(inputURL);
+      callback(data);
+    }
+    else if(plId) {
       log("Found a playlist, fetching items from youtube");
       Youtube.playlistItems.list(
         {"part": "contentDetails", "maxResults": 50, "playlistId": plId},
@@ -185,8 +190,7 @@ exports.parseURL = function(inputURL, callback) {
         });
     }
     else {
-      data.contentId = exports.getYoutubeID(inputURL);
-      callback(data);
+      callback(null);
     }
   }
   else if((parsed.host == "mediacru.sh" || parsed.host == "www.mediacru.sh") && path.extname(parsed.path) === '') {
