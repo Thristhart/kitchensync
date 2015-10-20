@@ -16,6 +16,11 @@ app.get('/kitchen', site.index);
 
 app.use('/kitchen/sync', lobby);
 
-http.listen(process.env.PORT | 5000);
+var http_target = process.env.PORT || 5000;
+if(process.env.LISTEN_FDS) {
+  http_target = {fd: 3};
+}
+http.listen(http_target, function() {
+});
 
 console.log("Started everything and the kitchen sync");
