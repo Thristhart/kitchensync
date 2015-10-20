@@ -9,7 +9,7 @@ YoutubeFaucet.buildPlayer = function(container) {
 
   if(typeof(YT) === "undefined") {
     var ytLoader = document.createElement("script");
-    ytLoader.src = "http://www.youtube.com/iframe_api";
+    ytLoader.src = "https://www.youtube.com/iframe_api";
     document.body.appendChild(ytLoader);
     ytLoader.onload = function() {
       YT.ready(YoutubeFaucet.onYTAPIReady);
