@@ -28,7 +28,13 @@
     "gulp-util": "^3.0.7",
     "require-dir": "^0.3.0",
     "riotify": "^1.0.0",
+    "socket.io-client": "^1.4.5",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "youtube-iframe": "^1.0.2"
+  },
+  "dependencies": {
+    "koa": "^1.2.0",
+    "koa-static": "^2.0.0"
   }
 }

@@ -1,5 +1,7 @@
 const riot = require('riot');
 
-const sync = require('./tags/sync.tag');
+require('./tags/kitchen.tag');
 
-riot.mount('*');
+riot.mount('kitchen');
+
+riot.route.start(true);

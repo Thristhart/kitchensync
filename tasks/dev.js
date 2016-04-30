@@ -18,6 +18,8 @@ function dev() {
     server: {
       baseDir: "./public"
     },
+    port: 8081,
+    ghostMode: false,
     plugins: ["bs-fullscreen-message"]
   });
 }

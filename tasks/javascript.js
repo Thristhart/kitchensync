@@ -15,7 +15,7 @@ const browserSync = require('browser-sync').get('dev');
 function js() {
   return browserify({
     entries: ['./app.js'],
-    debug: false
+    debug: true
   })
   .transform(riotify)
   .on('error', function(error) {
