@@ -1,0 +1,19 @@
+{
+  "name": "kitchensync",
+  "version": "2.0.0",
+  "description": "Media syncing over HTTP2 and SSE",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thristhart/kitchensync.git"
+  },
+  "author": "thristhart <tom@shea.at>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thristhart/kitchensync/issues"
+  },
+  "homepage": "https://github.com/Thristhart/kitchensync#readme"
+}
